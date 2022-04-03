@@ -1,7 +1,7 @@
 pipeline {
     	
 	agent any
-
+	 
 	environment {
 		PROJECT      = './Booth.DocketTest/Booth.DocketTest.csproj'
     }
