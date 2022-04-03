@@ -11,4 +11,4 @@ COPY /deploy ./WebAPI
 RUN mkdir ./WebAPI/config
 
 WORKDIR /app/WebAPI
-ENTRYPOINT ["dotnet", "Booth.PortfolioManager.Web.dll"]
+ENTRYPOINT ["dotnet", "Booth.DockerTest.dll"]
