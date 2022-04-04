@@ -22,7 +22,7 @@ namespace Booth.DockerTest.Controllers
             var result = new List<BackupDefinition>();
             foreach (var service in services)
             {
-                result.AddRange(service.Spec.Labels.Select(x => new BackupDefinition() { Name = x.Key + "=" + x.Value });
+                result.AddRange(service.Spec.Labels.Select(x => new BackupDefinition() { Name = x.Key + "=" + x.Value }));
             }
      
             return result;
