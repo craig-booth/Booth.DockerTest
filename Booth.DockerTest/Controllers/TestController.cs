@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
+using Docker.DotNet;
+
 namespace Booth.DockerTest.Controllers
 {
     [Route("api/test")]
@@ -9,9 +11,13 @@ namespace Booth.DockerTest.Controllers
     {
 
         [HttpGet]
-        public IEnumerable<BackupDefinition> Get()
+        public async Task<IEnumerable<BackupDefinition>> Get()
         {
-            return new BackupDefinition[] { new BackupDefinition() { Name = "volume 1" }, new BackupDefinition() { Name = "volume2" } };
+            var dockerClient = new DockerClientConfiguration(new Uri("unix:///var/run/docker.sock")).CreateClient();
+
+            var volumes = await dockerClient.Volumes.ListAsync();
+
+            return volumes.Volumes.Select(x => new BackupDefinition() { Name = x.Name });
         }
 
     }
