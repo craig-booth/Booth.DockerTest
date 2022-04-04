@@ -17,7 +17,15 @@ namespace Booth.DockerTest.Controllers
 
             var volumes = await dockerClient.Volumes.ListAsync();
 
-            return volumes.Volumes.Select(x => new BackupDefinition() { Name = x.Name });
+            var services = await dockerClient.Swarm.ListServicesAsync();
+
+            var result = new List<BackupDefinition>();
+            foreach (var service in services)
+            {
+                result.AddRange(service.Spec.Labels.Select(x => new BackupDefinition() { Name = x.Key + "=" + x.Value });
+            }
+     
+            return result;
         }
 
     }
