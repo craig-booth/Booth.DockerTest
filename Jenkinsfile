@@ -36,6 +36,7 @@ pipeline {
 			steps {
 				script {
 					def dockerImage = docker.build("craigbooth/dockertest")
+					httpRequest httpMode: 'POST', responseHandle: 'NONE', url: 'https://portainer.boothfamily.id.au/api/webhooks/2edd15ff-a183-4055-9355-54656aaa7066', wrapAsMultipart: false
 				}
             }
 		}
