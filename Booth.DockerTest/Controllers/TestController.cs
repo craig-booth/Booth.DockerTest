@@ -23,7 +23,8 @@ namespace Booth.DockerTest.Controllers
             {
                 foreach (var mount in service.Spec.TaskTemplate.ContainerSpec.Mounts)
                 {
-                    result.Add(new BackupDefinition(mount.Source));
+                    foreach (var backup in result.Where(x => x.VolumeName == mount.Source))
+                        backup.Services.Add(mount.Source);
                 }
             }
 
