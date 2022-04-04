@@ -17,8 +17,13 @@ namespace Booth.DockerTest.Controllers
 
             var volumes = await dockerClient.Volumes.ListAsync();
 
-            return volumes.Volumes.Where(x => x.Labels.ContainsKey("booth.dockerbackup.enable")).Where(x => x.Labels["booth.dockerbackup.enable"] == "true").Select(x => new BackupDefinition() { Name = x.Name });
-
+            var result = new List<BackupDefinition>();
+            foreach (var volume in volumes.Volumes)
+            {
+                result.AddRange(volume.Labels.Select(x => new BackupDefinition() { Name = x.Key + "=" + x.Value }));
+            }
+     
+            return result;
         }
 
     }
