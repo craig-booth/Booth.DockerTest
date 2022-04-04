@@ -20,6 +20,7 @@ namespace Booth.DockerTest.Controllers
             var result = new List<BackupDefinition>();
             foreach (var volume in volumes.Volumes)
             {
+                result.Add(new BackupDefinition() { volume.Name });
                 result.AddRange(volume.Labels.Select(x => new BackupDefinition() { Name = x.Key + "=" + x.Value }));
             }
      
