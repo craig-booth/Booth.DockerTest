@@ -10,14 +10,19 @@ namespace Booth.DockerTest
         private class ServiceDefinition
         {
             public string Id;
-            public string Name;
+            public int Version;
+            string Name;
+            public ServiceSpec Spec;
             public int Scale;
 
-            public ServiceDefinition(string id, string name, int scale)
+            public ServiceDefinition(string id, int version, ServiceSpec spec)
             {
                 Id = id; 
-                Name = name;
-                Scale = scale;
+                Version = version;  
+                Name = spec.Name;
+                Scale = (int)spec.Mode.Replicated.Replicas;
+
+                Spec = spec;
             }
         }
 
@@ -39,11 +44,12 @@ namespace Booth.DockerTest
             var affectedServices = await GetAffectedServices(backupDefinition);
 
             foreach (var service in affectedServices)
-                await StopService(service.Name);
+                await StopService(service);
 
+            await Task.Delay(30000);
 
             foreach (var service in affectedServices)
-                await StartService(service.Name, service.Scale);          
+                await StartService(service);          
         }
 
         private async Task<IEnumerable<ServiceDefinition>> GetAffectedServices(BackupDefinition backupDefinition)
@@ -57,7 +63,7 @@ namespace Booth.DockerTest
                 {
                     if (backupDefinition.Volumes.Contains(mount.Source))
                     {
-                        affectedServices.Add(new ServiceDefinition(service.ID, service.Spec.Name, (int)service.Spec.Mode.Replicated.Replicas));
+                        affectedServices.Add(new ServiceDefinition(service.ID, (int)service.Version.Index, service.Spec));
                         break;
                     }
                 }
@@ -67,17 +73,24 @@ namespace Booth.DockerTest
             return affectedServices;
         }
 
-        private async Task StopService(string id)
+        private async Task StopService(ServiceDefinition service)
         {
             var serviceParameters = new ServiceUpdateParameters();
-           // serviceParameters.Service.
+            serviceParameters.Service = service.Spec;
+            serviceParameters.Service.Mode.Replicated.Replicas = 0;
+            serviceParameters.Version = service.Version;
 
-            await _DockerClient.Swarm.UpdateServiceAsync(id, serviceParameters);
+            await _DockerClient.Swarm.UpdateServiceAsync(service.Id, serviceParameters);
         }
 
-        private async Task StartService(string id, int scale)
+        private async Task StartService(ServiceDefinition service)
         {
+            var serviceParameters = new ServiceUpdateParameters();
+            serviceParameters.Service = service.Spec;
+            serviceParameters.Service.Mode.Replicated.Replicas = (ulong)service.Scale;
+            serviceParameters.Version = service.Version;
 
+            await _DockerClient.Swarm.UpdateServiceAsync(service.Id, serviceParameters);
         }
 
 

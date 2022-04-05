@@ -19,7 +19,7 @@ namespace Booth.DockerTest.Controllers
         }
 
         [HttpGet]
-        public void Backup(string volumes)
+        public async Task<string> Backup(string volumes)
         {
             var backupDefintion = new BackupDefinition();
 
@@ -27,7 +27,9 @@ namespace Booth.DockerTest.Controllers
 
             var backupAgent = new BackupAgent();
 
-            backupAgent.Backup(backupDefintion);
+            await backupAgent.Backup(backupDefintion);
+
+            return "Done!!!";
         }
 
     }
