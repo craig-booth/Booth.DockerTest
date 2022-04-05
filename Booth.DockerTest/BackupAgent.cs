@@ -54,11 +54,14 @@ namespace Booth.DockerTest
             _Logger?.LogInformation("Backup volumes: " + String.Join(", ", backupDefinition.Volumes));
             var affectedServices = await GetAffectedServices(backupDefinition);
 
+            _Logger?.LogInformation("Stop services...");
             foreach (var service in affectedServices)
                 await StopService(service);
 
+            _Logger?.LogInformation("Waiting...");
             await Task.Delay(30000);
 
+            _Logger?.LogInformation("Restart services...");
             foreach (var service in affectedServices)
                 await StartService(service);          
         }
@@ -96,7 +99,9 @@ namespace Booth.DockerTest
             serviceParameters.Service.Mode.Replicated.Replicas = 0;
             serviceParameters.Version = service.Version;
 
+            _Logger?.LogInformation("Update service " + service.Spec.Name);
             await _DockerClient.Swarm.UpdateServiceAsync(service.Id, serviceParameters);
+            _Logger?.LogInformation("Updated");
         }
 
         private async Task StartService(ServiceDefinition service)
