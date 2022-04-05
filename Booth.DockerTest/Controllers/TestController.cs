@@ -11,25 +11,23 @@ namespace Booth.DockerTest.Controllers
     {
 
         [HttpGet]
-        public async Task<IEnumerable<BackupDefinition>> Get()
+        public async Task<IEnumerable<string>> Get()
         {
-            var dockerClient = new DockerClientConfiguration(new Uri("unix:///var/run/docker.sock")).CreateClient();
+            var backupAgent = new BackupAgent();
 
-            var volumes = await dockerClient.Volumes.ListAsync();
-            var result = volumes.Volumes.Select(x => new BackupDefinition(x.Name)).ToList();
+            return await backupAgent.GetVolumes();
+        }
 
-            var services = await dockerClient.Swarm.ListServicesAsync();
-            foreach (var service in services)
-            {
-                foreach (var mount in service.Spec.TaskTemplate.ContainerSpec.Mounts)
-                {
-                    foreach (var backup in result.Where(x => x.VolumeName == mount.Source))
-                        backup.Services.Add(service.Spec.Name);
-                }
-            }
+        [HttpGet]
+        public void Backup(string volumes)
+        {
+            var backupDefintion = new BackupDefinition();
 
-                 
-            return result;
+            backupDefintion.Volumes.AddRange(volumes.Split(","));
+
+            var backupAgent = new BackupAgent();
+
+            backupAgent.Backup(backupDefintion);
         }
 
     }
