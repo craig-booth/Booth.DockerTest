@@ -88,6 +88,7 @@ namespace Booth.DockerTest
                 }
             }
 
+            _Logger?.LogInformation($"Found {affectedServices.Count} services");
 
             return affectedServices;
         }
