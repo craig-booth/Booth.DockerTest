@@ -3,7 +3,14 @@ using Docker.DotNet.Models;
 
 namespace Booth.DockerTest
 {
-    public class BackupAgent
+
+    public interface IBackupAgent
+    {
+        Task<IEnumerable<string>> GetVolumes();
+        Task Backup(BackupDefinition backupDefinition);
+    }
+
+    public class BackupAgent : IBackupAgent
     {
         private DockerClient _DockerClient;
         private ILogger _Logger;
@@ -27,7 +34,7 @@ namespace Booth.DockerTest
             }
         }
 
-        public BackupAgent(ILogger logger)
+        public BackupAgent(ILogger<BackupAgent> logger)
         {
             _Logger = logger;
             _DockerClient = new DockerClientConfiguration(new Uri("unix:///var/run/docker.sock")).CreateClient();

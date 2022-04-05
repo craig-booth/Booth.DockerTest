@@ -9,8 +9,8 @@ namespace Booth.DockerTest.Controllers
     [ApiController]
     public class TestController : ControllerBase
     {
-        private BackupAgent _BackupAgent;
-        public TestController(BackupAgent backupAgent)
+        private IBackupAgent _BackupAgent;
+        public TestController(IBackupAgent backupAgent)
         {
             _BackupAgent = backupAgent;
         }

@@ -12,7 +12,7 @@
     "Booth.DockerTest": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "api/test",
+      "launchUrl": "api/volumes",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
