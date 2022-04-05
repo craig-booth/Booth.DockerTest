@@ -44,7 +44,7 @@ namespace Booth.DockerTest
 
         public async Task Backup(BackupDefinition backupDefinition)
         {
-            _Logger?.LogInformation("Backup volumes: " + backupDefinition.Volumes);
+            _Logger?.LogInformation("Backup volumes: " + String.Join(", ", backupDefinition.Volumes));
             var affectedServices = await GetAffectedServices(backupDefinition);
 
             foreach (var service in affectedServices)
