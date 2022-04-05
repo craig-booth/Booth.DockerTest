@@ -78,14 +78,16 @@ namespace Booth.DockerTest
                 _Logger?.LogInformation("service id: " + service.ID);
                 _Logger?.LogInformation("service name: " + service.Spec.Name);
 
-                foreach (var mount in service.Spec.TaskTemplate.ContainerSpec.Mounts)
+              /*  foreach (var mount in service.Spec.TaskTemplate.ContainerSpec.Mounts)
                 {
                     if (backupDefinition.Volumes.Contains(mount.Source))
                     {
                         affectedServices.Add(new ServiceDefinition(service.ID, (int)service.Version.Index, service.Spec));
                         break;
                     }
-                }
+                } */
+
+                _Logger?.LogInformation("done" );
             }
 
             _Logger?.LogInformation($"Found {affectedServices.Count} services");
