@@ -9,14 +9,17 @@ namespace Booth.DockerTest.Controllers
     [ApiController]
     public class TestController : ControllerBase
     {
+        private BackupAgent _BackupAgent;
+        public TestController(BackupAgent backupAgent)
+        {
+            _BackupAgent = backupAgent;
+        }
 
         [HttpGet]
         [Route("volumes")]
         public async Task<IEnumerable<string>> Get()
         {
-            var backupAgent = new BackupAgent();
-
-            return await backupAgent.GetVolumes();
+            return await _BackupAgent.GetVolumes();
         }
 
         [HttpGet]
@@ -24,12 +27,9 @@ namespace Booth.DockerTest.Controllers
         public async Task<string> Backup([FromQuery] string volumes)
         {
             var backupDefintion = new BackupDefinition();
-
             backupDefintion.Volumes.AddRange(volumes.Split(","));
 
-            var backupAgent = new BackupAgent();
-
-            await backupAgent.Backup(backupDefintion);
+            await _BackupAgent.Backup(backupDefintion);
 
             return "Done!!!";
         }

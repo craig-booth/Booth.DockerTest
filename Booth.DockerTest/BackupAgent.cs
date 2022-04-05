@@ -6,6 +6,7 @@ namespace Booth.DockerTest
     public class BackupAgent
     {
         private DockerClient _DockerClient;
+        private ILogger _Logger;
 
         private class ServiceDefinition
         {
@@ -26,14 +27,16 @@ namespace Booth.DockerTest
             }
         }
 
-        public BackupAgent()
+        public BackupAgent(ILogger logger)
         {
+            _Logger = logger;
             _DockerClient = new DockerClientConfiguration(new Uri("unix:///var/run/docker.sock")).CreateClient();
         }
 
 
         public async Task<IEnumerable<string>> GetVolumes()
-        { 
+        {
+            _Logger?.LogInformation("Get Volumes");
             var volumes = await _DockerClient.Volumes.ListAsync();
 
             return volumes.Volumes.Select(x => x.Name);
@@ -41,6 +44,7 @@ namespace Booth.DockerTest
 
         public async Task Backup(BackupDefinition backupDefinition)
         {
+            _Logger?.LogInformation("Backup volumes: " + backupDefinition.Volumes);
             var affectedServices = await GetAffectedServices(backupDefinition);
 
             foreach (var service in affectedServices)
@@ -54,11 +58,16 @@ namespace Booth.DockerTest
 
         private async Task<IEnumerable<ServiceDefinition>> GetAffectedServices(BackupDefinition backupDefinition)
         {
+            _Logger?.LogInformation("Get affected services");
             var affectedServices = new List<ServiceDefinition>();
 
             var services = await _DockerClient.Swarm.ListServicesAsync();
+            _Logger?.LogInformation("Found services");
             foreach (var service in services)
             {
+                _Logger?.LogInformation("service id: " + service.ID);
+                _Logger?.LogInformation("service name: " + service.Spec.Name);
+
                 foreach (var mount in service.Spec.TaskTemplate.ContainerSpec.Mounts)
                 {
                     if (backupDefinition.Volumes.Contains(mount.Source))
