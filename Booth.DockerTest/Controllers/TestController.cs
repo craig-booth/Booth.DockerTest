@@ -5,12 +5,13 @@ using Docker.DotNet;
 
 namespace Booth.DockerTest.Controllers
 {
-    [Route("api/test")]
+    [Route("api")]
     [ApiController]
     public class TestController : ControllerBase
     {
 
         [HttpGet]
+        [Route("volumes")]
         public async Task<IEnumerable<string>> Get()
         {
             var backupAgent = new BackupAgent();
@@ -19,7 +20,8 @@ namespace Booth.DockerTest.Controllers
         }
 
         [HttpGet]
-        public async Task<string> Backup(string volumes)
+        [Route("backup")]
+        public async Task<string> Backup([FromQuery] string volumes)
         {
             var backupDefintion = new BackupDefinition();
 
