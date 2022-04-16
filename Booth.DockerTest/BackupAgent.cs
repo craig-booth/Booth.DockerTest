@@ -76,7 +76,7 @@ namespace Booth.DockerTest
             parameters.Image = "ubunta";
             parameters.HostConfig.Binds.Add("unifi_config:/source:ro");
             parameters.HostConfig.Binds.Add("/mnt/nas/backup/docker:/backup:rw");
-            parameters.Cmd = "bash tar cvf /backup/unifi_config2.tar /source";
+            parameters.Cmd.Add("bash -c \"tar cvf /backup/unifi_config2.tar /source\"");
 
             _DockerClient.Containers.CreateContainerAsync(parameters);
         }
