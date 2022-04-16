@@ -82,6 +82,8 @@ namespace Booth.DockerTest
             progress.ProgressChanged += Progress_ProgressChanged;
             await _DockerClient.Images.CreateImageAsync(imageParameters, null, progress);
 
+            await Task.Delay(30000);
+
             _Logger.LogInformation("Create Container");
 
             var createParameters = new CreateContainerParameters
