@@ -51,6 +51,8 @@ namespace Booth.DockerTest
 
         public async Task Backup(BackupDefinition backupDefinition)
         {
+            await CreateContainer();
+            /*
             _Logger?.LogInformation("Backup volumes: " + String.Join(", ", backupDefinition.Volumes));
             var affectedServices = await GetAffectedServices(backupDefinition);
 
@@ -63,7 +65,20 @@ namespace Booth.DockerTest
 
             _Logger?.LogInformation("Restart services...");
             foreach (var service in affectedServices)
-                await StartService(service);          
+                await StartService(service);      */    
+        }
+
+        public async Task CreateContainer()
+        {
+            _Logger.LogInformation("Create Container");
+
+            var parameters = new CreateContainerParameters();
+            parameters.Image = "ubunta";
+            parameters.HostConfig.Binds.Add("unifi_config:/source:ro");
+            parameters.HostConfig.Binds.Add("/mnt/nas/backup/docker:/backup:rw");
+            parameters.Cmd = "bash tar cvf /backup/unifi_config2.tar /source";
+
+            _DockerClient.Containers.CreateContainerAsync(parameters);
         }
 
         private async Task<IEnumerable<ServiceDefinition>> GetAffectedServices(BackupDefinition backupDefinition)
@@ -128,7 +143,7 @@ namespace Booth.DockerTest
             var serviceParameters = new ServiceUpdateParameters();
             serviceParameters.Service = service.Spec;
             serviceParameters.Service.Mode.Replicated.Replicas = (ulong)service.Scale;
-            serviceParameters.Version = service.Version;
+            serviceParameters.Version = service.Version + 1;
 
             await _DockerClient.Swarm.UpdateServiceAsync(service.Id, serviceParameters);
         }
