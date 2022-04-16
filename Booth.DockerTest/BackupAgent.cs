@@ -81,7 +81,7 @@ namespace Booth.DockerTest
                 {
                     Binds = new[] { @"unifi_config:/source:ro" }
                 }
-            }
+            };
             
           //  parameters.Volumes.Add("/source", new EmptyStruct());
           //  parameters.Volumes.Add("backup", new EmptyStruct());
