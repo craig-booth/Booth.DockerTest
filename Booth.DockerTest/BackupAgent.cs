@@ -108,7 +108,9 @@ namespace Booth.DockerTest
 
         private void Progress_ProgressChanged(object? sender, JSONMessage e)
         {
+            _Logger.LogInformation($"Progress status : {e.Status}");
             _Logger.LogInformation(e.ProgressMessage);
+            _Logger.LogInformation(e.ErrorMessage);
         }
 
         private async Task<IEnumerable<ServiceDefinition>> GetAffectedServices(BackupDefinition backupDefinition)
