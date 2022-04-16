@@ -76,9 +76,9 @@ namespace Booth.DockerTest
             var parameters = new CreateContainerParameters();
             parameters.Name = "DockerTest.Agent";
             parameters.Image = "ubunta";
-            parameters.Volumes.Add("/var/lib/docker/volumes/unifi_config", new EmptyStruct());
+            parameters.Volumes.Add("/source", new EmptyStruct());
           //  parameters.Volumes.Add("backup", new EmptyStruct());
-            parameters.HostConfig.Binds.Add("/var/lib/docker/volumes/unifi_config:/source:ro");
+            parameters.HostConfig.Binds.Add("/var/lib/docker/volumes/unifi_config/_data:/source:ro");
         //    parameters.HostConfig.Binds.Add("/mnt/nas/backup/docker:/backup:rw");
             parameters.Cmd.Add("bash -c \"tar cvf /backup/unifi_config2.tar /source\"");
 
