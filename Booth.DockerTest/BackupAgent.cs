@@ -71,6 +71,16 @@ namespace Booth.DockerTest
 
         public async Task CreateContainer()
         {
+            _Logger.LogInformation("Create image");
+
+            var imageParameters = new ImagesCreateParameters
+            {
+                FromImage = "ubunta",
+                Tag = "latest"
+            };
+            await _DockerClient.Images.CreateImageAsync(imageParameters, null, new Progress<JSONMessage>());
+            
+
             _Logger.LogInformation("Create Container");
 
             var createParameters = new CreateContainerParameters
