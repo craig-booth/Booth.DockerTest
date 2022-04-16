@@ -73,24 +73,28 @@ namespace Booth.DockerTest
         {
             _Logger.LogInformation("Create Container");
 
-            var parameters = new CreateContainerParameters
+            var createParameters = new CreateContainerParameters
             {
                 Name = "DockerTest.Agent",
                 Image = "ubunta",
+                Cmd = new[] { "bash", "-c", "tar cvf /backup/unifi_config2.tar /source" },
                 HostConfig = new HostConfig
                 {
                     Binds = new[] { @"unifi_config:/source:ro" }
                 }
             };
-            
-          //  parameters.Volumes.Add("/source", new EmptyStruct());
-          //  parameters.Volumes.Add("backup", new EmptyStruct());
-           // parameters.HostConfig.Binds.Add("/var/lib/docker/volumes/unifi_config/_data:/source:ro");
-        //    parameters.HostConfig.Binds.Add("/mnt/nas/backup/docker:/backup:rw");
-         //   parameters.Cmd.Add("bash -c \"tar cvf /backup/unifi_config2.tar /source\"");
 
-            _DockerClient.Containers.CreateContainerAsync(parameters);
+            var response = await _DockerClient.Containers.CreateContainerAsync(createParameters);
+            var containerId = response.ID;
+
+            _Logger.LogInformation($"New container id: {containerId}"); 
+
+            var startParameters = new ContainerStartParameters();
+            await _DockerClient.Containers.StartContainerAsync(containerId, startParameters);
+
+            _Logger.LogInformation("Started Container");
         }
+
 
         private async Task<IEnumerable<ServiceDefinition>> GetAffectedServices(BackupDefinition backupDefinition)
         {
