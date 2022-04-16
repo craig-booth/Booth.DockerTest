@@ -78,8 +78,9 @@ namespace Booth.DockerTest
                 FromImage = "ubunta",
                 Tag = "latest"
             };
-            await _DockerClient.Images.CreateImageAsync(imageParameters, null, new Progress<JSONMessage>());
-            
+            var progress = new Progress<JSONMessage>();
+            progress.ProgressChanged += Progress_ProgressChanged;
+            await _DockerClient.Images.CreateImageAsync(imageParameters, null, progress);
 
             _Logger.LogInformation("Create Container");
 
@@ -105,6 +106,10 @@ namespace Booth.DockerTest
             _Logger.LogInformation("Started Container");
         }
 
+        private void Progress_ProgressChanged(object? sender, JSONMessage e)
+        {
+            _Logger.LogInformation(e.ProgressMessage);
+        }
 
         private async Task<IEnumerable<ServiceDefinition>> GetAffectedServices(BackupDefinition backupDefinition)
         {
